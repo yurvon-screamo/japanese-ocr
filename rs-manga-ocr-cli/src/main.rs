@@ -1,20 +1,16 @@
 mod clipboard;
-mod config;
-mod hf;
-mod model;
+mod error;
 
 use crate::clipboard::ClipboardHandler;
-use crate::model::OCRModel;
+use crate::error::Error;
 use clap::{Parser, ValueEnum};
+use rs_manga_ocr::MangaOCRModel;
 use std::fmt::Display;
 use std::path::PathBuf;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Args {
-    #[arg(short, long, default_value = "l0wgear/manga-ocr-2025-onnx")]
-    model: String,
-
     #[arg(short, long)]
     image: Option<PathBuf>,
 
@@ -39,11 +35,11 @@ impl Display for Mode {
     }
 }
 
-fn main() -> anyhow::Result<()> {
+fn main() -> Result<(), Error> {
     let args = Args::parse();
 
     println!("Initializing model...");
-    let model = OCRModel::from_name_or_path(&args.model)?;
+    let mut model = MangaOCRModel::load()?;
 
     match args.mode {
         Mode::File => {

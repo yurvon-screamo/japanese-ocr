@@ -1,122 +1,133 @@
-# Manga OCR (Rust Version)
+# Manga OCR
 
-This project is a Rust port of the original [Manga OCR](https://github.com/kha-white/manga-ocr) by [kha-white](https://github.com/kha-white).
+Высокопроизводительный OCR для распознавания японского текста с изображений манги, написанный на Rust.
 
-It provides optical character recognition for Japanese text, with a primary focus on Japanese manga. It uses a custom end-to-end model built with Transformers' [Vision Encoder Decoder](https://huggingface.co/docs/transformers/model_doc/vision-encoder-decoder) framework, converted to the ONNX format.
+## Описание
 
-## Motivation
+Manga OCR — это инструмент для оптического распознавания японского текста, оптимизированный для работы с манга-контентом. Проект использует архитектуру VisionEncoderDecoderModel с ONNX-моделями для эффективного инференса на CPU.
 
-The main motivation behind this project is to provide a slim, native manga OCR application that does not require setting up a Python environment and downloading large dependencies like PyTorch (which can be upwards of a gigabyte).
+### Архитектура модели
 
-Additionally, this version aims to fix clipboard handling issues present in the original project, which required spawning invisible windows to work around Wayland limitations.
+- **Энкодер**: ViT (Vision Transformer) на базе `facebook/deit-tiny-patch16-224`
+- **Декодер**: BERT на базе `tohoku-nlp/bert-base-japanese-char-v2`
+- **Формат**: ONNX для кроссплатформенной совместимости
 
-## Default Model
+## Возможности
 
-The default model used is [`l0wgear/manga-ocr-2025-onnx`](https://huggingface.co/l0wgear/manga-ocr-2025-onnx), which is an ONNX version of the model fine-tuned by [jzhang533](https://huggingface.co/jzhang533). You can find more details in the model's [readme](https://huggingface.co/l0wgear/manga-ocr-2025-onnx/blob/main/README.md). It's designed to be a high-quality text recognition tool, robust against various scenarios specific to manga:
-- Both vertical and horizontal text
-- Text with furigana
-- Text overlaid on images
-- A wide variety of fonts and font styles
-- Low-quality images
+- Распознавание японского текста с изображений
+- Два режима работы: файловый и мониторинг буфера обмена
+- Автоматическое копирование результата в буфер обмена
+- CPU-инференс без внешних зависимостей
 
-## Installation
+## Установка
 
-1.  Ensure you have the Rust toolchain installed. You can get it from [rustup.rs](https://rustup.rs/).
-2.  Clone this repository.
-3.  Build the project in release mode:
-    ```bash
-    cargo build --release
-    ```
-4.  The executable will be available at `target/release/manga-ocr-rs`.
-
-## Usage
-
-The application is controlled via command-line arguments.
-
-```
-Usage: manga-ocr-rs [OPTIONS]
-
-Options:
-  -m, --model <MODEL>
-          The Hugging Face repository ID or local path for the ONNX model.
-          [default: l0wgear/manga-ocr-2025-onnx]
-
-  -i, --image <IMAGE>
-          Path to the image file to process. Required when --mode is 'file'.
-
-  --mode <MODE>
-      The operating mode.
-      - file: Process a single image file.
-      - clipboard: Watch the clipboard for new images.
-      [default: clipboard]
-      [possible values: file, clipboard]
-
-  --refresh-timeout <REFRESH_TIMEOUT>
-          The timeout in seconds for refreshing the clipboard. Only applicable when --mode is 'clipboard'.
-          [default: 1]
-
-  -h, --help
-          Print help
-
-  -V, --version
-          Print version
-```
-
-### Examples
-
-**Clipboard Mode (Default):**
-
-Run the application without any arguments to start watching the clipboard. When you copy a new image, it will be processed, and the recognized text will be copied back to the clipboard.
+### CLI
 
 ```bash
-./target/release/manga-ocr-rs
+cargo install manga-ocr
 ```
 
-**File Mode:**
-
-Process a single image and print the recognized text to the console.
+### Библиотека
 
 ```bash
-./target/release/manga-ocr-rs --mode file --image /path/to/your/image.png
+cargo add rs-manga-ocr
 ```
 
-## Original Project Information
+## Использование
 
-This project is based on the work and documentation from the original `manga-ocr`. The following sections are from the original `README.md` available at [Manga OCR](https://github.com/kha-white/manga-ocr).
+### Режим буфера обмена (по умолчанию)
 
----
+Программа отслеживает буфер обмена и автоматически распознаёт текст с появляющихся изображений:
 
-Manga OCR can be used as a general purpose printed Japanese OCR, but its main goal was to provide a high quality
-text recognition, robust against various scenarios specific to manga:
-- both vertical and horizontal text
-- text with furigana
-- text overlaid on images
-- wide variety of fonts and font styles
-- low quality images
+```bash
+manga-ocr
+```
 
-Unlike many OCR models, Manga OCR supports recognizing multi-line text in a single forward pass,
-so that text bubbles found in manga can be processed at once, without splitting them into lines.
+Результат распознавания автоматически копируется обратно в буфер обмена.
 
-See also:
-- [Poricom](https://github.com/bluaxees/Poricom), a GUI reader, which uses manga-ocr
-- [mokuro](https://github.com/kha-white/mokuro), a tool, which uses manga-ocr to generate an HTML overlay for manga
-- [Xelieu's guide](https://rentry.co/lazyXel), a comprehensive guide on setting up a reading and mining workflow with manga-ocr/mokuro (and many other useful tips)
+### Режим работы с файлом
 
-### Usage tips
+```bash
+manga-ocr --mode file --image path/to/image.png
+```
 
-- OCR supports multi-line text, but the longer the text, the more likely some errors are to occur.
-  If the recognition failed for some part of a longer text, you might try to run it on a smaller portion of the image.
-- The model was trained specifically to handle manga well, but should do a decent job on other types of printed text,
-  such as novels or video games. It probably won't be able to handle handwritten text though.
-- The model always attempts to recognize some text on the image, even if there is none.
-  Because it uses a transformer decoder (and therefore has some understanding of the Japanese language),
-  it might even "dream up" some realistically looking sentences! This shouldn't be a problem for most use cases,
-  but it might get improved in the next version.
+### Параметры командной строки
 
-## Acknowledgements
+| Параметр                      | Описание                             | По умолчанию |
+| ----------------------------- | ------------------------------------ | ------------ |
+| `-i, --image <PATH>`          | Путь к изображению для распознавания | —            |
+| `--mode <MODE>`               | Режим работы: `file` или `clipboard` | `clipboard`  |
+| `--refresh-timeout <SECONDS>` | Интервал опроса буфера обмена        | `1.0`        |
 
-- **Original Author:** [kha-white](https://github.com/kha-white) for creating the original Manga OCR.
-- **Fine-tuning:** [jzhang533](https://huggingface.co/jzhang533) for training the `manga-ocr-base-2025` model.
-- The training of the models was done with the usage of:
-  - [Manga109-s](http://www.manga109.org/en/download_s.html) dataset
-  - [CC-100](https://data.statmt.org/cc-100/) dataset
+## Структура проекта
+
+```
+manga-ocr/
+├── rs-manga-ocr/           # Библиотека OCR
+│   ├── src/
+│   │   ├── lib.rs          # Публичный API
+│   │   ├── model.rs        # Реализация модели
+│   │   └── error.rs        # Обработка ошибок
+│   └── model/              # ONNX модели и токенизатор
+│       ├── encoder_model.onnx
+│       ├── decoder_model.onnx
+│       └── tokenizer.json
+├── rs-manga-ocr-cli/       # CLI приложение
+│   └── src/
+│       ├── main.rs         # Точка входа
+│       ├── clipboard.rs    # Работа с буфером обмена
+│       └── error.rs        # Обработка ошибок
+└── Cargo.toml              # Workspace конфигурация
+```
+
+## Технические детали
+
+### Предобработка изображений
+
+- Размер входного изображения: 224×224 пикселя
+- Нормализация: mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]
+- Метод ресайза: Nearest Neighbor
+
+### Генерация текста
+
+- Максимальная длина последовательности: 300 токенов
+- Автокорректировка с токенами `[CLS]` (start) и `[SEP]` (end)
+- Удаление пробелов из финального результата
+
+### Зависимости
+
+| Библиотека    | Назначение                       |
+| ------------- | -------------------------------- |
+| `candle-core` | Тензорные вычисления             |
+| `candle-onnx` | Работа с ONNX моделями           |
+| `tokenizers`  | Токенизация текста (HuggingFace) |
+| `image`       | Обработка изображений            |
+| `clap`        | Парсинг аргументов CLI           |
+| `arboard`     | Работа с буфером обмена          |
+
+## Использование как библиотека
+
+```rust
+use rs_manga_ocr::MangaOCRModel;
+use image;
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut model = MangaOCRModel::load()?;
+    let img = image::ImageReader::open("manga.png")?.decode()?;
+    let text = model.run(&img)?;
+    println!("Распознанный текст: {}", text);
+    Ok(())
+}
+```
+
+Добавьте в `Cargo.toml`:
+
+```toml
+[dependencies]
+rs-manga-ocr = { path = "path/to/rs-manga-ocr" }
+image = "0.25"
+```
+
+## Лицензия
+
+Проект распространяется под лицензией GNU AGPL v3. Подробности в файле [LICENSE](LICENSE).

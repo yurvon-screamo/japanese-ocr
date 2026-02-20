@@ -1,0 +1,18 @@
+[package]
+name = "rs-manga-ocr"
+version = "0.1.0"
+edition = "2024"
+description = "Japanese OCR library for manga text recognition"
+license = "AGPL-3.0"
+repository = "https://github.com/yurvon-screamo/rs-manga-ocr"
+authors = ["yurvon_screamo"]
+keywords = ["ocr", "japanese", "manga", "text-recognition"]
+categories = ["computer-vision", "text-processing"]
+
+[dependencies]
+prost.workspace = true
+thiserror.workspace = true
+image.workspace = true
+candle-core.workspace = true
+candle-onnx.workspace = true
+tokenizers.workspace = true

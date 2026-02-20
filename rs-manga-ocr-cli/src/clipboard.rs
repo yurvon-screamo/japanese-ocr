@@ -7,6 +7,8 @@ use std::{
 use arboard::{Clipboard, ImageData};
 use image::{DynamicImage, ImageBuffer, Rgba};
 
+use crate::error::Error;
+
 fn hash(data: &[u8]) -> u64 {
     let mut hasher = DefaultHasher::new();
     data.hash(&mut hasher);
@@ -32,7 +34,7 @@ pub struct ClipboardHandler {
 }
 
 impl ClipboardHandler {
-    pub fn new(refresh_timeout: f64) -> anyhow::Result<Self> {
+    pub fn new(refresh_timeout: f64) -> Result<Self, Error> {
         let mut clipboard = Clipboard::new()?;
         let old_hash = match clipboard.get_image() {
             Ok(img) => Some(hash(&img.bytes)),
@@ -69,7 +71,7 @@ impl ClipboardHandler {
         to_dyn_image(image)
     }
 
-    pub fn set_text(&mut self, text: &str) -> anyhow::Result<()> {
+    pub fn set_text(&mut self, text: &str) -> Result<(), Error> {
         self.clipboard.set_text(text)?;
         Ok(())
     }

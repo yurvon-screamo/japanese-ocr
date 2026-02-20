@@ -1,0 +1,18 @@
+[package]
+name = "manga-ocr"
+version = "0.1.0"
+edition = "2024"
+description = "CLI tool for Japanese OCR (manga text recognition)"
+license = "AGPL-3.0"
+repository = "https://github.com/твоё_имя/manga-ocr"
+authors = ["Твоё Имя <email@example.com>"]
+keywords = ["ocr", "japanese", "manga", "text-recognition", "cli"]
+categories = ["command-line-utilities", "computer-vision"]
+
+[dependencies]
+clap.workspace = true
+arboard.workspace = true
+image.workspace = true
+thiserror.workspace = true
+
+rs-manga-ocr = { path = "../rs-manga-ocr" }
