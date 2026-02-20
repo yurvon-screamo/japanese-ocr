@@ -1,25 +1,25 @@
 # Manga OCR
 
-Высокопроизводительный OCR для распознавания японского текста с изображений манги, написанный на Rust.
+High-performance OCR for recognizing Japanese text from manga images, written in Rust.
 
-## Описание
+## Description
 
-Manga OCR — это инструмент для оптического распознавания японского текста, оптимизированный для работы с манга-контентом. Проект использует архитектуру VisionEncoderDecoderModel с ONNX-моделями для эффективного инференса на CPU.
+Manga OCR is a tool for optical character recognition of Japanese text, optimized for manga content. The project uses the VisionEncoderDecoderModel architecture with ONNX models for efficient inference on CPU.
 
-### Архитектура модели
+### Model Architecture
 
-- **Энкодер**: ViT (Vision Transformer) на базе `facebook/deit-tiny-patch16-224`
-- **Декодер**: BERT на базе `tohoku-nlp/bert-base-japanese-char-v2`
-- **Формат**: ONNX для кроссплатформенной совместимости
+- **Encoder**: ViT (Vision Transformer) based on `facebook/deit-tiny-patch16-224`
+- **Decoder**: BERT based on `tohoku-nlp/bert-base-japanese-char-v2`
+- **Format**: ONNX for cross-platform compatibility
 
-## Возможности
+## Features
 
-- Распознавание японского текста с изображений
-- Два режима работы: файловый и мониторинг буфера обмена
-- Автоматическое копирование результата в буфер обмена
-- CPU-инференс без внешних зависимостей
+- Recognition of Japanese text from images
+- Two operating modes: file and clipboard monitoring
+- Automatic copying of the result to the clipboard
+- CPU inference without external dependencies
 
-## Установка
+## Installation
 
 ### CLI
 
@@ -27,85 +27,85 @@ Manga OCR — это инструмент для оптического расп
 cargo install manga-ocr
 ```
 
-### Библиотека
+### Library
 
 ```bash
 cargo add rs-manga-ocr
 ```
 
-## Использование
+## Usage
 
-### Режим буфера обмена (по умолчанию)
+### Clipboard Mode (Default)
 
-Программа отслеживает буфер обмена и автоматически распознаёт текст с появляющихся изображений:
+The program monitors the clipboard and automatically recognizes text from appearing images:
 
 ```bash
 manga-ocr
 ```
 
-Результат распознавания автоматически копируется обратно в буфер обмена.
+The recognition result is automatically copied back to the clipboard.
 
-### Режим работы с файлом
+### File Mode
 
 ```bash
 manga-ocr --mode file --image path/to/image.png
 ```
 
-### Параметры командной строки
+### Command Line Arguments
 
-| Параметр                      | Описание                             | По умолчанию |
+| Argument                      | Description                          | Default      |
 | ----------------------------- | ------------------------------------ | ------------ |
-| `-i, --image <PATH>`          | Путь к изображению для распознавания | —            |
-| `--mode <MODE>`               | Режим работы: `file` или `clipboard` | `clipboard`  |
-| `--refresh-timeout <SECONDS>` | Интервал опроса буфера обмена        | `1.0`        |
+| `-i, --image <PATH>`          | Path to the image for recognition    | —            |
+| `--mode <MODE>`               | Operating mode: `file` or `clipboard`| `clipboard`  |
+| `--refresh-timeout <SECONDS>` | Clipboard polling interval           | `1.0`        |
 
-## Структура проекта
+## Project Structure
 
 ```
 manga-ocr/
-├── rs-manga-ocr/           # Библиотека OCR
+├── rs-manga-ocr/           # OCR Library
 │   ├── src/
-│   │   ├── lib.rs          # Публичный API
-│   │   ├── model.rs        # Реализация модели
-│   │   └── error.rs        # Обработка ошибок
-│   └── model/              # ONNX модели и токенизатор
+│   │   ├── lib.rs          # Public API
+│   │   ├── model.rs        # Model Implementation
+│   │   └── error.rs        # Error Handling
+│   └── model/              # ONNX models and tokenizer
 │       ├── encoder_model.onnx
 │       ├── decoder_model.onnx
 │       └── tokenizer.json
-├── rs-manga-ocr-cli/       # CLI приложение
+├── rs-manga-ocr-cli/       # CLI Application
 │   └── src/
-│       ├── main.rs         # Точка входа
-│       ├── clipboard.rs    # Работа с буфером обмена
-│       └── error.rs        # Обработка ошибок
-└── Cargo.toml              # Workspace конфигурация
+│       ├── main.rs         # Entry Point
+│       ├── clipboard.rs    # Clipboard Operations
+│       └── error.rs        # Error Handling
+└── Cargo.toml              # Workspace Configuration
 ```
 
-## Технические детали
+## Technical Details
 
-### Предобработка изображений
+### Image Preprocessing
 
-- Размер входного изображения: 224×224 пикселя
-- Нормализация: mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]
-- Метод ресайза: Nearest Neighbor
+- Input image size: 224×224 pixels
+- Normalization: mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]
+- Resize method: Nearest Neighbor
 
-### Генерация текста
+### Text Generation
 
-- Максимальная длина последовательности: 300 токенов
-- Автокорректировка с токенами `[CLS]` (start) и `[SEP]` (end)
-- Удаление пробелов из финального результата
+- Maximum sequence length: 300 tokens
+- Autocorrection with `[CLS]` (start) and `[SEP]` (end) tokens
+- Removal of spaces from the final result
 
-### Зависимости
+### Dependencies
 
-| Библиотека    | Назначение                       |
+| Library       | Purpose                          |
 | ------------- | -------------------------------- |
-| `candle-core` | Тензорные вычисления             |
-| `candle-onnx` | Работа с ONNX моделями           |
-| `tokenizers`  | Токенизация текста (HuggingFace) |
-| `image`       | Обработка изображений            |
-| `clap`        | Парсинг аргументов CLI           |
-| `arboard`     | Работа с буфером обмена          |
+| `candle-core` | Tensor computations              |
+| `candle-onnx` | Working with ONNX models         |
+| `tokenizers`  | Text tokenization (HuggingFace)  |
+| `image`       | Image processing                 |
+| `clap`        | Parsing CLI arguments            |
+| `arboard`     | Clipboard operations             |
 
-## Использование как библиотека
+## Usage as a Library
 
 ```rust
 use rs_manga_ocr::MangaOCRModel;
@@ -115,12 +115,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut model = MangaOCRModel::load()?;
     let img = image::ImageReader::open("manga.png")?.decode()?;
     let text = model.run(&img)?;
-    println!("Распознанный текст: {}", text);
+    println!("Recognized text: {}", text);
     Ok(())
 }
 ```
 
-Добавьте в `Cargo.toml`:
+Add to `Cargo.toml`:
 
 ```toml
 [dependencies]
@@ -128,6 +128,6 @@ rs-manga-ocr = { path = "path/to/rs-manga-ocr" }
 image = "0.25"
 ```
 
-## Лицензия
+## License
 
-Проект распространяется под лицензией GNU AGPL v3. Подробности в файле [LICENSE](LICENSE).
+The project is distributed under the GNU AGPL v3 license. Details in the [LICENSE](LICENSE) file.
