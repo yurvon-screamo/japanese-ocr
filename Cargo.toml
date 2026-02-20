@@ -13,8 +13,8 @@ strip = true
 prost = "0.14"
 thiserror = "2.0"
 image = "0.25"
-candle-core = { git = "https://github.com/huggingface/candle.git", version = "0.9" }
-candle-onnx = { git = "https://github.com/huggingface/candle.git", version = "0.9" }
+candle-core = { git = "https://github.com/huggingface/candle.git", rev = "8cc682c97bcb8a76017ad23e35fde8adac639e3f", default-features = false }
+candle-onnx = { git = "https://github.com/huggingface/candle.git", rev = "8cc682c97bcb8a76017ad23e35fde8adac639e3f", default-features = false }
 tokenizers = { version = "0.22", default-features = false, features = [
     "unstable_wasm",
 ] }
@@ -25,3 +25,6 @@ arboard = { version = "3.6", features = [
     "wayland-data-control",
     "wl-clipboard-rs",
 ] }
+
+# WASM‑specific  
+getrandom = { version = "0.2", features = ["js"] }

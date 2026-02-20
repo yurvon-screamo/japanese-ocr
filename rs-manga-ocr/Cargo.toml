@@ -16,3 +16,4 @@ image.workspace = true
 candle-core.workspace = true
 candle-onnx.workspace = true
 tokenizers.workspace = true
+getrandom.workspace = true

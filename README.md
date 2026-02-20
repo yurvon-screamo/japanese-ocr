@@ -1,5 +1,7 @@
 # Manga OCR
 
+> WASM Support
+
 High-performance OCR for recognizing Japanese text from manga images, written in Rust.
 
 ## Description
