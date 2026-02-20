@@ -2,11 +2,11 @@
 name = "rs-japanese-ocr"
 version = "0.1.0"
 edition = "2024"
-description = "Japanese OCR library for japanese text recognition"
+description = "Japanese OCR WASM compatible library for japanese text recognition"
 license = "AGPL-3.0"
 repository = "https://github.com/yurvon-screamo/japanese-ocr"
 authors = ["yurvon_screamo"]
-keywords = ["ocr", "manga", "japanese", "text-recognition"]
+keywords = ["ocr", "manga", "japanese", "text-recognition", "wasm"]
 categories = ["computer-vision", "text-processing"]
 
 [dependencies]

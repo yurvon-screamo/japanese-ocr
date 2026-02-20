@@ -32,7 +32,7 @@ cargo install japanese-ocr
 ### Library
 
 ```bash
-cargo add japanese-ocr
+cargo add rs-japanese-ocr
 ```
 
 ## Usage
@@ -63,7 +63,7 @@ japanese-ocr --mode file --image path/to/image.png
 
 ## Project Structure
 
-```
+```tree
 japanese-ocr/
 ├── japanese-ocr/           # OCR Library
 │   ├── src/
