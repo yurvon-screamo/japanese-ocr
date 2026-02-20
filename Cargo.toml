@@ -25,6 +25,3 @@ arboard = { version = "3.6", features = [
     "wayland-data-control",
     "wl-clipboard-rs",
 ] }
-
-# WASM‑specific  
-getrandom = { version = "0.2", features = ["js"] }

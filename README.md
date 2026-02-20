@@ -26,13 +26,13 @@ Japanese OCR is a tool for optical character recognition of Japanese text, optim
 ### CLI
 
 ```bash
-cargo install japanese-ocr
+cargo install --git https://github.com/yurvon-screamo/japanese-ocr japanese-ocr
 ```
 
 ### Library
 
 ```bash
-cargo add rs-japanese-ocr
+cargo add --git https://github.com/yurvon-screamo/japanese-ocr rs-japanese-ocr
 ```
 
 ## Usage
