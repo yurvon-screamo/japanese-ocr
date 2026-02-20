@@ -124,10 +124,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 Add to `Cargo.toml`:
 
-```toml
-[dependencies]
-japanese-ocr = { path = "path/to/japanese-ocr" }
-image = "0.25"
+```bash
+cargo add --git https://github.com/yurvon-screamo/japanese-ocr rs-japanese-ocr
 ```
 
 ## License
