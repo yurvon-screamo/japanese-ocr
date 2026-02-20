@@ -1,12 +1,12 @@
-# Manga OCR
+# Japanese OCR
 
 > WASM Support
 
-High-performance OCR for recognizing Japanese text from manga images, written in Rust.
+High-performance OCR for recognizing Japanese text from japanese images, written in Rust.
 
 ## Description
 
-Manga OCR is a tool for optical character recognition of Japanese text, optimized for manga content. The project uses the VisionEncoderDecoderModel architecture with ONNX models for efficient inference on CPU.
+Japanese OCR is a tool for optical character recognition of Japanese text, optimized for japanese content. The project uses the VisionEncoderDecoderModel architecture with ONNX models for efficient inference on CPU.
 
 ### Model Architecture
 
@@ -26,13 +26,13 @@ Manga OCR is a tool for optical character recognition of Japanese text, optimize
 ### CLI
 
 ```bash
-cargo install manga-ocr
+cargo install japanese-ocr
 ```
 
 ### Library
 
 ```bash
-cargo add rs-manga-ocr
+cargo add japanese-ocr
 ```
 
 ## Usage
@@ -42,7 +42,7 @@ cargo add rs-manga-ocr
 The program monitors the clipboard and automatically recognizes text from appearing images:
 
 ```bash
-manga-ocr
+japanese-ocr
 ```
 
 The recognition result is automatically copied back to the clipboard.
@@ -50,7 +50,7 @@ The recognition result is automatically copied back to the clipboard.
 ### File Mode
 
 ```bash
-manga-ocr --mode file --image path/to/image.png
+japanese-ocr --mode file --image path/to/image.png
 ```
 
 ### Command Line Arguments
@@ -64,8 +64,8 @@ manga-ocr --mode file --image path/to/image.png
 ## Project Structure
 
 ```
-manga-ocr/
-├── rs-manga-ocr/           # OCR Library
+japanese-ocr/
+├── japanese-ocr/           # OCR Library
 │   ├── src/
 │   │   ├── lib.rs          # Public API
 │   │   ├── model.rs        # Model Implementation
@@ -74,7 +74,7 @@ manga-ocr/
 │       ├── encoder_model.onnx
 │       ├── decoder_model.onnx
 │       └── tokenizer.json
-├── rs-manga-ocr-cli/       # CLI Application
+├── japanese-ocr-cli/       # CLI Application
 │   └── src/
 │       ├── main.rs         # Entry Point
 │       ├── clipboard.rs    # Clipboard Operations
@@ -110,12 +110,12 @@ manga-ocr/
 ## Usage as a Library
 
 ```rust
-use rs_manga_ocr::MangaOCRModel;
+use rs_japanese_ocr::JapaneseOCRModel;
 use image;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut model = MangaOCRModel::load()?;
-    let img = image::ImageReader::open("manga.png")?.decode()?;
+    let mut model = JapaneseOCRModel::load()?;
+    let img = image::ImageReader::open("japanese.png")?.decode()?;
     let text = model.run(&img)?;
     println!("Recognized text: {}", text);
     Ok(())
@@ -126,7 +126,7 @@ Add to `Cargo.toml`:
 
 ```toml
 [dependencies]
-rs-manga-ocr = { path = "path/to/rs-manga-ocr" }
+japanese-ocr = { path = "path/to/japanese-ocr" }
 image = "0.25"
 ```
 

@@ -4,7 +4,7 @@ mod error;
 use crate::clipboard::ClipboardHandler;
 use crate::error::Error;
 use clap::{Parser, ValueEnum};
-use rs_manga_ocr::MangaOCRModel;
+use rs_japanese_ocr::JapaneseOCRModel;
 use std::fmt::Display;
 use std::path::PathBuf;
 
@@ -37,9 +37,7 @@ impl Display for Mode {
 
 fn main() -> Result<(), Error> {
     let args = Args::parse();
-
-    println!("Initializing model...");
-    let mut model = MangaOCRModel::load()?;
+    let mut model = JapaneseOCRModel::load()?;
 
     match args.mode {
         Mode::File => {
@@ -57,7 +55,7 @@ fn main() -> Result<(), Error> {
         }
         Mode::Clipboard => {
             let mut clipboard = ClipboardHandler::new(args.refresh_timeout)?;
-            println!("Ready to do OCR");
+            println!("Paste image");
 
             loop {
                 let image = clipboard.get_image();

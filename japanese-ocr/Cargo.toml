@@ -1,0 +1,18 @@
+[package]
+name = "japanese-ocr"
+version = "0.1.0"
+edition = "2024"
+description = "CLI tool for Japanese OCR (japanese text recognition)"
+license = "AGPL-3.0"
+repository = "https://github.com/yurvon-screamo/japanese-ocr"
+authors = ["yurvon_screamo"]
+keywords = ["ocr", "manga", "japanese", "text-recognition", "cli"]
+categories = ["command-line-utilities", "computer-vision"]
+
+[dependencies]
+clap.workspace = true
+arboard.workspace = true
+image.workspace = true
+thiserror.workspace = true
+
+rs-japanese-ocr = { path = "../rs-japanese-ocr" }

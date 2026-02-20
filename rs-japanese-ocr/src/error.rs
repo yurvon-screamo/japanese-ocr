@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum MangaOCRError {
+pub enum JapaneseOCRError {
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
 

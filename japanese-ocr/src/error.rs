@@ -3,7 +3,7 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("Library error: {0}")]
-    Lib(#[from] rs_manga_ocr::MangaOCRError),
+    Lib(#[from] rs_japanese_ocr::JapaneseOCRError),
 
     #[error("Clipboard error: {0}")]
     Clipboard(#[from] arboard::Error),

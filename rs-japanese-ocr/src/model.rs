@@ -6,7 +6,7 @@ use prost::Message;
 use std::collections::HashMap;
 use tokenizers::Tokenizer;
 
-use crate::error::MangaOCRError;
+use crate::error::JapaneseOCRError;
 
 const MAX_SEQ_LEN: usize = 300;
 const IMAGE_RESIZE_W: u32 = 224;
@@ -19,25 +19,25 @@ static ENCODER_BYTES: &[u8] = include_bytes!("model/encoder_model.onnx");
 static DECODER_BYTES: &[u8] = include_bytes!("model/decoder_model.onnx");
 static TOKENIZER_BYTES: &[u8] = include_bytes!("model/tokenizer.json");
 
-pub struct MangaOCRModel {
+pub struct JapaneseOCRModel {
     encoder: ModelProto,
     decoder: ModelProto,
     tokenizer: Tokenizer,
     device: Device,
 }
 
-impl MangaOCRModel {
-    pub fn load() -> Result<Self, MangaOCRError> {
+impl JapaneseOCRModel {
+    pub fn load() -> Result<Self, JapaneseOCRError> {
         let device = Device::Cpu;
 
         let tokenizer = Tokenizer::from_bytes(TOKENIZER_BYTES)
-            .map_err(|e| MangaOCRError::Tokenizer(format!("Failed to load tokenizer: {}", e)))?;
+            .map_err(|e| JapaneseOCRError::Tokenizer(format!("Failed to load tokenizer: {}", e)))?;
 
         let encoder = ModelProto::decode(ENCODER_BYTES)
-            .map_err(|e| MangaOCRError::Model(format!("Failed to decode encoder: {}", e)))?;
+            .map_err(|e| JapaneseOCRError::Model(format!("Failed to decode encoder: {}", e)))?;
 
         let decoder = ModelProto::decode(DECODER_BYTES)
-            .map_err(|e| MangaOCRError::Model(format!("Failed to decode decoder: {}", e)))?;
+            .map_err(|e| JapaneseOCRError::Model(format!("Failed to decode decoder: {}", e)))?;
 
         Ok(Self {
             encoder,
@@ -47,7 +47,7 @@ impl MangaOCRModel {
         })
     }
 
-    pub fn run(&mut self, img: &DynamicImage) -> Result<String, MangaOCRError> {
+    pub fn run(&mut self, img: &DynamicImage) -> Result<String, JapaneseOCRError> {
         let pixel_values = self.preprocess_image(img)?;
 
         let mut encoder_inputs: HashMap<String, Tensor> = HashMap::new();
@@ -57,7 +57,9 @@ impl MangaOCRModel {
 
         let encoder_hidden_states = encoder_outputs
             .get("last_hidden_state")
-            .ok_or_else(|| MangaOCRError::Model("Missing last_hidden_state from encoder".into()))?
+            .ok_or_else(|| {
+                JapaneseOCRError::Model("Missing last_hidden_state from encoder".into())
+            })?
             .clone();
 
         let bos_token_id = self.tokenizer.token_to_id("[CLS]").unwrap_or(2);
@@ -79,7 +81,7 @@ impl MangaOCRModel {
 
             let logits = decoder_outputs
                 .get("logits")
-                .ok_or_else(|| MangaOCRError::Model("Missing logits from decoder".into()))?;
+                .ok_or_else(|| JapaneseOCRError::Model("Missing logits from decoder".into()))?;
 
             let seq_len = logits.dim(1)?;
             let last_logits = logits.i((0, seq_len - 1, ..))?;
@@ -98,12 +100,12 @@ impl MangaOCRModel {
                 &input_ids.iter().map(|&id| id as u32).collect::<Vec<_>>(),
                 true,
             )
-            .map_err(|e| MangaOCRError::Tokenizer(format!("Failed to decode: {}", e)))?;
+            .map_err(|e| JapaneseOCRError::Tokenizer(format!("Failed to decode: {}", e)))?;
 
         Ok(decoded.replace(" ", ""))
     }
 
-    fn preprocess_image(&self, img: &DynamicImage) -> Result<Tensor, MangaOCRError> {
+    fn preprocess_image(&self, img: &DynamicImage) -> Result<Tensor, JapaneseOCRError> {
         let resized = img.resize_exact(IMAGE_RESIZE_W, IMAGE_RESIZE_H, FilterType::Nearest);
         let rgb = resized.to_rgb8();
         let (width, height) = rgb.dimensions();
@@ -136,7 +138,7 @@ mod tests {
             .decode()
             .unwrap();
 
-        let mut model = MangaOCRModel::load().unwrap();
+        let mut model = JapaneseOCRModel::load().unwrap();
 
         let output = model.run(&img);
         assert!(output.is_ok());

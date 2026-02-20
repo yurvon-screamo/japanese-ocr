@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["rs-manga-ocr", "rs-manga-ocr-cli"]
+members = ["rs-japanese-ocr", "japanese-ocr"]
 
 [profile.release]
 opt-level = 3
